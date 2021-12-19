@@ -1,0 +1,46 @@
+---
+
+- name: Lab2
+  hosts: all
+  become: yes
+
+  vars:
+    my_path: ./
+
+  tasks:
+    - name: Ping servers
+      ping: 
+    
+    - block: #------------CentOs-----
+      - name: Install Nginx
+        yum: name=nginx state=latest
+      when: ansible_os_family == "RedHat"
+    
+    - block: #------------Debian-----
+      - name: Install Nginx
+        apt: name=nginx state=latest
+      when: ansible_os_family == "Debian"
+    
+    - name: Copy file
+      copy: 
+        src: application.cpp
+        dest: application.cpp  
+    
+    - name: Make binary file
+      ansible.builtin.shell:
+        cmd: g++ application.cpp
+      register: My_var
+    
+    - name: Run
+      ansible.builtin.shell:
+        cmd: ./a.out root
+      register: My_var
+      notify: Print
+    
+    
+
+  handlers:
+    - name: Print
+      debug: var=My_var
+
+...
