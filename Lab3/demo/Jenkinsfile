@@ -1,0 +1,40 @@
+node {
+    stage('Clone repo') {
+        git branch: 'main',
+        url: 'https://github.com/OstapchukMixail/pdris.git'
+    }
+    stage('Change dir') {
+        sh 'cd Lab3/demo'
+    }
+    stage('Build') {
+        sh 'cd Lab3/demo/ && mvn clean package'
+    }
+    stage('SonarQube') {
+        def scannerHome = tool "MySonar";
+        withSonarQubeEnv('MySonar') {
+            sh "${scannerHome}/bin/sonar-scanner -X \
+                -Dsonar.projectKey=Lab3 \
+                -Dsonar.sources=Lab3/demo/src/main \
+                -Dsonar.tests=Lab3/demo/src/test \
+                -Dsonar.java.binaries=Lab3/demo/target/classes"
+        }
+    }
+    stage('AllureReport') {
+        allure([
+                includeProperties: false,
+                jdk: '',
+                properties: [],
+                reportBuildPolicy: 'ALWAYS',
+                results: [[path: 'target/allure-results']]
+                ])
+        
+    }
+    stage('Ansible') {
+        sh 'pwd'
+        ansiblePlaybook(
+            inventory:'Lab3/demo/serv.hosts',
+            playbook: 'Lab3/demo/main.yaml',
+            colorized: true
+        )
+    }
+}
