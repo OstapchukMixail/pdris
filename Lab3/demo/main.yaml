@@ -1,0 +1,22 @@
+---
+
+- name: Lab3
+  hosts: all
+  become: no
+
+  tasks:
+  - name: Create folder
+    file:
+      path: /home/mftiedu/ostapchuk/Lab3
+      state: directory
+
+  - name: Copy jar
+    copy:
+      src: ./target/demo-1.0-SNAPSHOT.jar
+      dest: /home/mftiedu/ostapchuk/Lab3
+
+  - name: Deploy jar
+    become: yes
+    shell: cd "/home/mftiedu/ostapchuk/Lab3" && nohup java -jar demo-1.0-SNAPSHOT.jar &
+
+...
