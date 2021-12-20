@@ -12,11 +12,11 @@
 
   - name: Copy jar
     copy:
-      src: ./target/demo-1.0-SNAPSHOT.jar
+      src: ./target/demo-0.0.1-SNAPSHOT.jar
       dest: /home/mftiedu/ostapchuk/Lab3
 
   - name: Deploy jar
     become: yes
-    shell: cd "/home/mftiedu/ostapchuk/Lab3" && nohup java -jar demo-1.0-SNAPSHOT.jar &
+    shell: cd "/home/mftiedu/ostapchuk/Lab3" && nohup java -jar demo-0.0.1-SNAPSHOT.jar &
 
 ...
